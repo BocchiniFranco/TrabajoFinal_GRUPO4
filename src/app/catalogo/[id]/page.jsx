@@ -1,27 +1,51 @@
+// app/catalago/[id]/page.jsx
+
+// Componente de Servidor (Async)
 export default async function DetalleAuto({ params }) {
-  // Aseguramos que params esté disponible
-  const { id } = await params
-
-  const autos = [
-    { id: 1, marca: "Toyota", modelo: "Corolla", anio: 2022, precio: 22000, descripcion: "Un sedán confiable, económico y con excelente rendimiento." },
-    { id: 2, marca: "Ford", modelo: "Focus", anio: 2021, precio: 21000, descripcion: "Deportivo y ágil, ideal para conducción urbana." },
-    { id: 3, marca: "Chevrolet", modelo: "Cruze", anio: 2023, precio: 25000, descripcion: "Tecnología avanzada y gran confort interior." },
-    { id: 4, marca: "Volkswagen", modelo: "Golf", anio: 2020, precio: 20000, descripcion: "Compacto y elegante, excelente balance entre potencia y consumo." },
-  ]
-
-  const auto = autos.find((a) => a.id.toString() === id)
-
-  if (!auto) {
-    return <h2 style={{ padding: "2rem" }}>Auto no encontrado 🚫</h2>
+  // 1. CORRECCIÓN: Usar 'await' para desestructurar 'params' (como lo exige tu versión de Next.js)
+  const { id } = await params; 
+  
+  // Si el ID sigue siendo nulo, retornamos un error claro
+  if (!id) {
+    return <h2 style={{ padding: "2rem" }}>Error: ID de auto no proporcionado 🚫</h2>
   }
 
+  const API_CAR_DETAIL_URL = `https://690aa7dc1a446bb9cc234227.mockapi.io/cars/${id}`;
+  let auto = null;
+  
+  try {
+    const res = await fetch(API_CAR_DETAIL_URL, { cache: 'no-store' });
+
+    if (!res.ok) {
+        throw new Error(`Auto con ID ${id} no encontrado.`); 
+    }
+
+    auto = await res.json();
+    
+  } catch (error) {
+    console.error(`Error al obtener el auto ${id}:`, error);
+    if (error.message.includes("no encontrado")) {
+        return <h2 style={{ padding: "2rem" }}>{error.message} 🚫</h2>
+    }
+    return <h2 style={{ padding: "2rem" }}>Error de conexión con la API o el auto no existe.</h2>
+  }
+
+  // Verificar si la API devolvió un objeto vacío o nulo
+  if (!auto || !auto.id) {
+    return <h2 style={{ padding: "2rem" }}>Auto con ID {id} no existe 🚫</h2>
+  }
+
+  // Renderizado final
   return (
     <main style={{ padding: "2rem" }}>
       <h1>
-        {auto.marca} {auto.modelo} ({auto.anio})
+        {auto.brand} {auto.model} 
       </h1>
-      <p style={{ fontSize: "1.2rem" }}>{auto.descripcion}</p>
-      <h3>Precio: ${auto.precio.toLocaleString()}</h3>
+      
+      <h3>
+        Precio: ${parseFloat(auto.price).toLocaleString()}
+      </h3>
+      
       <a href="/catalogo" style={{ display: "inline-block", marginTop: "1.5rem", color: "#0070f3" }}>
         ← Volver al catálogo
       </a>
