@@ -32,8 +32,19 @@ export default function Navbar() {
 
         {/* 🛡️ Ruta Exclusiva para Administradores */}
         {user?.role === 'admin' && (
-          <Link href="/admin" style={{ ...linkStyle, color: '#FFD700', fontWeight: 'bold' }}>
-            ADMIN
+          <Link 
+            href="/admin" 
+            style={{ 
+              ...linkStyle, 
+              color: '#FFD700', 
+              fontWeight: 'bold',
+              background: 'rgba(255, 215, 0, 0.1)',
+              padding: '8px 12px',
+              borderRadius: '4px',
+              border: '1px solid #FFD700'
+            }}
+          >
+            🛡️ ADMIN
           </Link>
         )}
       </div>
@@ -43,8 +54,24 @@ export default function Navbar() {
         {isAuthenticated ? (
           <>
             {/* Mensaje de Bienvenida y Rol */}
-            <span style={{ color: '#bbb', fontSize: '0.9rem' }}>
-              Hola, **{user.name || user.email}** ({user.role})
+            <span style={{ 
+              color: '#bbb', 
+              fontSize: '0.9rem',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '8px'
+            }}>
+              <span>Hola, <strong>{user.name || user.email}</strong></span>
+              <span style={{
+                padding: '2px 6px',
+                background: user.role === 'admin' ? '#FFD700' : '#007bff',
+                color: user.role === 'admin' ? '#000' : '#fff',
+                borderRadius: '12px',
+                fontSize: '0.7rem',
+                fontWeight: 'bold'
+              }}>
+                {user.role?.toUpperCase()}
+              </span>
             </span>
             
             {/* Botón de Cerrar Sesión */}
@@ -57,8 +84,15 @@ export default function Navbar() {
           </>
         ) : (
           // Enlace de Login si no está autenticado
-          <Link href="/login" style={{ ...linkStyle, padding: '5px 10px', border: '1px solid #007bff', borderRadius: '4px' }}>
-            Login
+          <Link href="/login" style={{ 
+            ...linkStyle, 
+            padding: '8px 16px', 
+            border: '1px solid #007bff', 
+            borderRadius: '4px',
+            background: '#007bff',
+            fontWeight: 'bold'
+          }}>
+            Iniciar Sesión
           </Link>
         )}
       </div>
@@ -71,15 +105,25 @@ const linkStyle = {
   color: 'white',
   textDecoration: 'none',
   padding: '5px',
-  transition: 'color 0.2s',
+  transition: 'all 0.2s',
 };
 
 const buttonStyle = {
-  padding: '8px 12px',
+  padding: '8px 16px',
   background: '#dc3545', // Rojo para cerrar sesión
   color: 'white',
   border: 'none',
   borderRadius: '4px',
   cursor: 'pointer',
   fontWeight: 'bold',
+  transition: 'background 0.2s',
+};
+
+// Agregar hover effects
+linkStyle[':hover'] = {
+  color: '#007bff'
+};
+
+buttonStyle[':hover'] = {
+  background: '#c82333'
 };

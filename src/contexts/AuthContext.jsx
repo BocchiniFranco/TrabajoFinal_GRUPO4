@@ -1,97 +1,79 @@
-
-import React, { createContext, useContext, useState, useEffect } from 'react';
+'use client';
+import { createContext, useContext, useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 
-const AuthContext = createContext(null);
+// 1️⃣ Creamos el contexto de autenticación
+const AuthContext = createContext();
 
-// Hook para acceder al contexto
-export const useAuth = () => useContext(AuthContext); 
+// 2️⃣ Hook para acceder fácilmente al contexto
+export function useAuth() {
+  return useContext(AuthContext);
+}
 
-// API de USERS
-const API_USERS_URL = "https://690aa7dc1a446bb9cc234227.mockapi.io/users";
-
-// Componente Proveedor de Autenticación
-export default function AuthProvider({children}) {
-  const [user, setUser] = useState(null);
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-  // isLoading es crucial para evitar que el AuthChecker redirija antes de tiempo
-  const [isLoading, setIsLoading] = useState(true); 
-
+// 3️⃣ Componente proveedor de autenticación
+function AuthProvider({ children }) {
+  const [user, setUser] = useState(null);            // Guarda datos del usuario actual
+  const [isLoading, setIsLoading] = useState(true);  // Indica si está cargando
+  const [isAuthenticated, setIsAuthenticated] = useState(false); // Indica si hay sesión activa
   const router = useRouter();
 
-  // 1. EFECTO INICIAL: Revisa la sesión guardada al cargar la aplicación
+  // 4️⃣ Carga el usuario desde localStorage al montar la app
   useEffect(() => {
-    try {
-      const userStorage = localStorage.getItem("user");
-      
-      if (userStorage) {
-        const userData = JSON.parse(userStorage);
-        
-        // Verifica que la data exista y tenga la información básica
-        if (userData && userData.id) { 
-            setUser(userData);
-            setIsAuthenticated(true);
-        }
-      }
-    } catch (error) {
-        console.error("Error al cargar datos de usuario desde localStorage:", error);
-        localStorage.removeItem("user"); 
-    } finally {
-        setIsLoading(false); // La verificación terminó
+    const storedUser = localStorage.getItem('user');
+    if (storedUser) {
+      const parsed = JSON.parse(storedUser);
+      setUser(parsed);
+      setIsAuthenticated(true);
     }
+    setIsLoading(false);
   }, []);
 
-  // 2. FUNCIÓN DE LOGIN
-  const login = async(credentials) => {
+  // 5️⃣ Función de login con roles simulados
+  const login = async (email, password) => {
     setIsLoading(true);
-    
     try {
-        const resp = await fetch(API_USERS_URL);
-        const data = await resp.json();
+      let loggedUser = null;
 
-        // Buscar el usuario en la data recibida
-        const userFind = data.find(
-            u => u.email === credentials.email && u.password === credentials.password
-        );
+      // Si el usuario es admin
+      if (email === 'admin@admin.com' && password === 'admin123') {
+        loggedUser = { email, role: 'admin' };
+      } else {
+        loggedUser = { email, role: 'user' };
+      }
 
-        if(userFind){
-            // ASIGNACIÓN DE ROLES (chicos esto hay que cambiarlo en la API real, que sea un campo extra):
-            // En este caso asumimos que el primer usuario (id: 1) es el administrador, y el resto son usuarios básicos.
-            const role = userFind.id === '1' ? 'admin' : 'user';
-            const userWithRole = { ...userFind, role: role };
-            
-            setUser(userWithRole);
-            setIsAuthenticated(true);
-            localStorage.setItem("user", JSON.stringify(userWithRole));
-            
-            router.push("/"); // Redirige a la página principal después del login
-            return userWithRole;
-        }else{
-            setIsAuthenticated(false);
-            alert("Usuario o Contraseña Incorrectos");
-            return {error: "Usuario o Contraseña Incorrectos"};
-        }
+      // Guardar sesión
+      localStorage.setItem('user', JSON.stringify(loggedUser));
+      setUser(loggedUser);
+      setIsAuthenticated(true);
+
+      // Redirigir según rol
+      if (loggedUser.role === 'admin') {
+        router.push('/admin');
+      } else {
+        router.push('/catalogo');
+      }
     } catch (error) {
-        console.error("Error al conectar con la API:", error);
-        alert("Hubo un error al intentar iniciar sesión. Inténtalo de nuevo.");
-        return {error: "Error de conexión"};
+      console.error('Error al iniciar sesión:', error);
     } finally {
-        setIsLoading(false);
+      setIsLoading(false);
     }
-  }
+  };
 
-  // 3. FUNCIÓN DE LOGOUT
+  // 6️⃣ Función de logout
   const logout = () => {
+    localStorage.removeItem('user');
     setUser(null);
     setIsAuthenticated(false);
-    localStorage.removeItem("user");
-    router.push("/login"); // Redirige al login después de cerrar sesión
-  }
+    router.push('/login');
+  };
 
-
+  // 7️⃣ Proveedor del contexto
   return (
-    <AuthContext.Provider value={{user, isLoading, login, logout, isAuthenticated}}>
-        {children}
+    <AuthContext.Provider value={{ user, isAuthenticated, isLoading, login, logout }}>
+      {children}
     </AuthContext.Provider>
   );
 }
+
+// 8️⃣ Export por defecto para poder importarlo fácilmente
+export default AuthProvider;
