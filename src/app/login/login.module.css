@@ -1,0 +1,98 @@
+/* app/login/login.module.css */
+
+.container {
+  padding: 3rem; 
+  max-width: 400px;
+  margin: 5rem auto 0;
+  background-color: white;
+  border-radius: 12px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+  color: #1a1a1a; 
+  text-align: left;
+}
+
+.title {
+    font-size: 1.8rem;
+    margin-bottom: 2rem;
+    text-align: center;
+    font-weight: 700;
+}
+
+.form {
+    display: flex;
+    flex-direction: column;
+}
+
+.formGroup {
+  margin-bottom: 1.5rem;
+}
+
+.formGroup label {
+  display: block;
+  margin-bottom: 0.6rem;
+  font-weight: 600;
+  font-size: 1rem;
+  color: #333;
+}
+
+/* ✨ CORRECCIÓN CLAVE: Estilo de Inputs */
+.formGroup input {
+  width: 100%;
+  padding: 1rem 0.75rem; 
+  border: 1px solid #cceeff; /* Borde más claro */
+  border-radius: 6px;
+  box-sizing: border-box; 
+  font-size: 1rem;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  background-color: #f9f9f9; 
+  /* ✨ Contraste de texto en input: Aseguramos que el texto escrito sea oscuro */
+  color: #333; 
+}
+
+/* Estilo para el placeholder y cuando el input está lleno */
+.formGroup input::placeholder {
+    color: #999;
+}
+
+.formGroup input:focus {
+    border-color: #0070f3; 
+    box-shadow: 0 0 0 3px rgba(0, 112, 243, 0.2); 
+    outline: none;
+}
+/* Fin de corrección de Inputs */
+
+.submitButton {
+  padding: 1rem; 
+  width: 100%;
+  background: #0070f3; 
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: bold;
+  font-size: 1.1rem;
+  transition: background-color 0.2s;
+  margin-top: 0.5rem;
+}
+
+.submitButton:hover {
+    background-color: #005bb5;
+}
+
+.submitButton:disabled {
+    /* Mantenemos el color activo, pero cambiamos el cursor */
+    background-color: #0070f3; 
+    opacity: 0.7; /* Opacidad para indicar inactividad */
+    cursor: not-allowed;
+}
+
+.message {
+  margin-top: 1rem;
+  padding: 0.75rem;
+  text-align: center;
+  /* Eliminamos el fondo para la sección de prueba */
+  background-color: transparent; 
+  border: none;
+  color: #555;
+  font-size: 0.9rem;
+}

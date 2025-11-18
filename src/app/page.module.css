@@ -139,3 +139,192 @@ a.secondary {
     --button-secondary-border: #1a1a1a;
   }
 }
+
+
+
+/* src/app/page.module.css */
+
+.mainContainer {
+  padding: 0;
+  margin: 0 auto;
+  color: #333; 
+  background-color: white; 
+  min-height: 100vh;
+}
+
+.contentWrapper {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+.hero {
+  background-image: url('https://images.pexels.com/photos/164634/pexels-photo-164634.jpeg'); 
+  background-size: cover;
+  background-position: center 30%;
+  height: 400px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  text-align: center;
+  position: relative;
+}
+
+.heroContent {
+  background-color: rgba(0, 0, 0, 0.7); 
+  padding: 30px 50px;
+  border-radius: 10px;
+}
+
+.heroTitle {
+  font-size: 2.5rem;
+  margin-bottom: 10px;
+}
+
+.heroSubtitle {
+  font-size: 1.2rem;
+  margin-bottom: 25px;
+}
+
+.ctaButton {
+  display: inline-block;
+  padding: 12px 25px;
+  background-color: #007bff;
+  color: white;
+  text-decoration: none;
+  border-radius: 5px;
+  font-weight: bold;
+  margin-right: 15px;
+  transition: background-color 0.2s;
+  border: none;
+}
+.ctaButton:hover {
+    background-color: #0056b3;
+}
+
+.adminButton {
+  display: inline-block;
+  padding: 12px 25px;
+  background-color: #ffc107; 
+  color: #333;
+  text-decoration: none;
+  border-radius: 5px;
+  font-weight: bold;
+  transition: background-color 0.2s;
+  border: none;
+}
+.adminButton:hover {
+    background-color: #e0a800;
+}
+
+
+/* --- SECCIÓN SERVICIOS (Promesas) --- */
+.servicesSection {
+  padding: 60px 20px;
+  text-align: center;
+  background-color: #f8f9fa; 
+  color: #333; 
+}
+
+.serviceCards {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 30px;
+  margin-top: 40px;
+}
+
+.card {
+  flex: 0 1 300px;
+  padding: 30px;
+  background-color: white;
+  border-radius: 10px;
+  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.08);
+  color: #333; 
+  text-align: left;
+}
+
+.card h3 {
+    margin-bottom: 15px;
+    font-size: 1.4rem;
+    color: #007bff;
+}
+.card p {
+    font-size: 1rem;
+    line-height: 1.6;
+}
+
+/* --- SECCIÓN CONTACTO --- */
+.contactSection {
+  padding: 60px 20px;
+  background-color: #f0f0f0; 
+  text-align: center;
+}
+
+.contactForm {
+  max-width: 600px;
+  margin: 30px auto;
+  padding: 30px;
+  border: 1px solid #e0e0e0;
+  border-radius: 10px;
+  text-align: left;
+  background-color: white;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+}
+
+.formGroup {
+  margin-bottom: 20px;
+}
+
+.formGroup label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: bold;
+  color: #555;
+}
+
+.formGroup input,
+.formGroup textarea {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  box-sizing: border-box;
+  font-size: 1rem;
+}
+
+.formGroup textarea {
+  resize: vertical;
+}
+
+.submitButton {
+  padding: 12px 25px;
+  background-color: #28a745;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  font-size: 1rem;
+  font-weight: bold;
+}
+.submitButton:hover {
+    background-color: #218838;
+}
+
+@media (max-width: 768px) {
+  .heroTitle {
+    font-size: 1.8rem;
+  }
+  .heroSubtitle {
+    font-size: 1rem;
+  }
+  .serviceCards {
+    flex-direction: column;
+    align-items: center;
+  }
+  .card {
+    flex: 0 1 90%;
+  }
+}
