@@ -1,98 +1,137 @@
-
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { API_CONFIG } from '@/config/config';
 
+// Crear contexto de autenticación
 const AuthContext = createContext(null);
 
-// Hook para acceder al contexto
-export const useAuth = () => useContext(AuthContext); 
+// Hook personalizado para acceder al contexto de autenticación
+export const useAuth = () => {
+  const context = useContext(AuthContext);
+  if (!context) {
+    throw new Error('useAuth debe ser usado dentro de un AuthProvider');
+  }
+  return context;
+};
 
-// API de USERS
+// URL de la API de usuarios desde la configuración
 const API_USERS_URL = API_CONFIG.API_USERS_URL;
 
 // Componente Proveedor de Autenticación
-export default function AuthProvider({children}) {
+export default function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
-  // isLoading es crucial para evitar que el AuthChecker redirija antes de tiempo
+  // Estado de carga crucial para evitar redirecciones prematuras
   const [isLoading, setIsLoading] = useState(true); 
 
   const router = useRouter();
 
-  // 1. EFECTO INICIAL: Revisa la sesión guardada al cargar la aplicación
+  // Efecto inicial: Revisa la sesión guardada al cargar la aplicación
   useEffect(() => {
-    try {
-      const userStorage = localStorage.getItem("user");
-      
-      if (userStorage) {
-        const userData = JSON.parse(userStorage);
+    const checkStoredAuth = () => {
+      try {
+        const userStorage = localStorage.getItem("user");
         
-        // Verifica que la data exista y tenga la información básica
-        if (userData && userData.id) { 
+        if (userStorage) {
+          const userData = JSON.parse(userStorage);
+          
+          // Verifica que los datos existan y tengan información básica
+          if (userData && userData.id) { 
             setUser(userData);
             setIsAuthenticated(true);
+          }
         }
-      }
-    } catch (error) {
+      } catch (error) {
         console.error("Error al cargar datos de usuario desde localStorage:", error);
+        // Limpiar datos corruptos
         localStorage.removeItem("user"); 
-    } finally {
-        setIsLoading(false); // La verificación terminó
-    }
+      } finally {
+        setIsLoading(false); // La verificación inicial terminó
+      }
+    };
+
+    checkStoredAuth();
   }, []);
 
-  // 2. FUNCIÓN DE LOGIN
-  const login = async(credentials) => {
+  // Función de login mejorada con manejo de errores
+  const login = async (credentials) => {
     setIsLoading(true);
-    
+
     try {
-        const resp = await fetch(API_USERS_URL);
-        const data = await resp.json();
+      // Validación básica de credenciales
+      if (!credentials.email || !credentials.password) {
+        return { error: "Por favor ingresa email y contraseña" };
+      }
 
-        // Buscar el usuario en la data recibida
-        const userFind = data.find(
-            u => u.email === credentials.email && u.password === credentials.password
-        );
+      // Intentamos obtener los usuarios desde la API
+      const response = await fetch(API_USERS_URL);
 
-        if(userFind){
-            // ASIGNACIÓN DE ROLES (chicos esto hay que cambiarlo en la API real, que sea un campo extra):
-            // En este caso asumimos que el primer usuario (id: 1) es el administrador, y el resto son usuarios básicos.
-            const role = userFind.id === '1' ? 'admin' : 'user';
-            const userWithRole = { ...userFind, role: role };
-            
-            setUser(userWithRole);
-            setIsAuthenticated(true);
-            localStorage.setItem("user", JSON.stringify(userWithRole));
-            
-            router.push("/"); // Redirige a la página principal después del login
-            return userWithRole;
-        }else{
-            setIsAuthenticated(false);
-            alert("Usuario o Contraseña Incorrectos");
-            return {error: "Usuario o Contraseña Incorrectos"};
-        }
+      if (!response.ok) {
+        throw new Error("Error en la respuesta de la API de usuarios");
+      }
+
+      const users = await response.json();
+
+      // Buscar usuario que coincida con email y contraseña
+      const foundUser = users.find(
+        user => user.email === credentials.email && user.password === credentials.password
+      );
+
+      // Si no existe el usuario, retornar error controlado
+      if (!foundUser) {
+        return { error: "Usuario o contraseña incorrectos" };
+      }
+
+      // Asignar rol basado en el ID (admin si es ID 1, user para otros)
+      const role = foundUser.id === "1" ? "admin" : "user";
+      const userWithRole = { ...foundUser, role };
+
+      // Actualizar estado y almacenamiento local
+      setUser(userWithRole);
+      setIsAuthenticated(true);
+      localStorage.setItem("user", JSON.stringify(userWithRole));
+
+      // Redirigir después de una pequeña pausa para asegurar la actualización del estado
+      setTimeout(() => {
+        router.push("/");
+      }, 100);
+
+      return { success: true, user: userWithRole };
+
     } catch (error) {
-        console.error("Error al conectar con la API:", error);
-        alert("Hubo un error al intentar iniciar sesión. Inténtalo de nuevo.");
-        return {error: "Error de conexión"};
+      // Manejar errores de red, JSON corrupto, servidor no disponible, etc.
+      console.error("Error en el proceso de login:", error);
+      return { error: "Error de conexión con el servidor" };
     } finally {
-        setIsLoading(false);
+      setIsLoading(false);
     }
-  }
+  };
 
-  // 3. FUNCIÓN DE LOGOUT
+  // Función de logout - cierra la sesión del usuario
   const logout = () => {
+    // Limpiar estado
     setUser(null);
     setIsAuthenticated(false);
+    
+    // Limpiar almacenamiento local
     localStorage.removeItem("user");
-    router.push("/login"); // Redirige al login después de cerrar sesión
-  }
+    
+    // Redirigir al login después de cerrar sesión
+    router.push("/login");
+  };
 
+  // Valores que estarán disponibles en el contexto
+  const contextValue = {
+    user,
+    isLoading,
+    isAuthenticated,
+    login,
+    logout
+  };
 
   return (
-    <AuthContext.Provider value={{user, isLoading, login, logout, isAuthenticated}}>
-        {children}
+    <AuthContext.Provider value={contextValue}>
+      {children}
     </AuthContext.Provider>
   );
 }
