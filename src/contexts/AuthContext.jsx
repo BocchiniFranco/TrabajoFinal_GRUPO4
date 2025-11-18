@@ -1,6 +1,7 @@
 
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import { API_CONFIG } from '@/config/config';
 
 const AuthContext = createContext(null);
 
@@ -8,7 +9,7 @@ const AuthContext = createContext(null);
 export const useAuth = () => useContext(AuthContext); 
 
 // API de USERS
-const API_USERS_URL = "https://690aa7dc1a446bb9cc234227.mockapi.io/users";
+const API_USERS_URL = API_CONFIG.API_USERS_URL;
 
 // Componente Proveedor de Autenticación
 export default function AuthProvider({children}) {

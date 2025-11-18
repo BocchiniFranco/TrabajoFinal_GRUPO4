@@ -1,12 +1,10 @@
-// app/catalogo/page.jsx
-import CarCard from '../../Components/CarCard'; // ✨ Importar el nuevo componente
+import CarCard from '../../Components/CarCard';
 import styles from './catalogo.module.css';
+import { API_CONFIG } from '@/config/config';
 
-// ... (getCars function sin cambios) ...
-const API_CARS_URL = "https://690aa7dc1a446bb9cc234227.mockapi.io/cars";
+const API_CARS_URL = API_CONFIG.API_CARS_URL;
 
 async function getCars() { 
-  // ... (código del fetch)
   try {
     const res = await fetch(API_CARS_URL, { cache: 'no-store' }); 
     if (!res.ok) {
@@ -39,7 +37,6 @@ export default async function CatalogoPage() {
       <ul className={styles.list}>
         {autos.map((auto) => (
           <li key={auto.id} className={styles.listItem}>
-            {/* ✨ AHORA LLAMAMOS AL COMPONENTE DE CLIENTE */}
             <CarCard auto={auto} />
           </li>
         ))}

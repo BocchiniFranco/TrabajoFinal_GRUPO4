@@ -1,0 +1,104 @@
+.container {
+    padding: 2rem;
+}
+
+.title {
+    font-size: 1.8rem;
+    margin-bottom: 0.5rem;
+    color: #1a1a1a;
+}
+
+.subtitle {
+    font-size: 1rem;
+    margin-bottom: 1.5rem;
+    color: #6b7280;
+}
+
+.carList {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.carCard {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px;
+    background-color: white;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+}
+
+.carInfo {
+    /* Contenedor para el título y el estado */
+    flex-grow: 1; 
+}
+
+.carActions {
+    display: flex;
+    gap: 10px;
+}
+
+.carTitle {
+    font-size: 1.1rem;
+    margin: 0;
+    color: #0070f3;
+}
+
+.statusAvailable {
+    color: #28a745; 
+    font-weight: bold;
+    font-size: 0.85rem;
+    margin-top: 5px;
+}
+
+.statusRented {
+    color: #dc3545; 
+    font-weight: bold;
+    font-size: 0.85rem;
+    margin-top: 5px;
+}
+
+/* Botones de acción */
+.buttonBase {
+    padding: 8px 15px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: background-color 0.2s;
+}
+
+.buttonRent {
+    background-color: #ffc107; 
+    color: #333;
+}
+.buttonRent:hover {
+    background-color: #e0a800;
+}
+
+.buttonRelease {
+    background-color: #28a745; 
+    color: white;
+}
+.buttonRelease:hover {
+    background-color: #218838;
+}
+
+.buttonDelete {
+    background-color: #dc3545; /* Rojo para eliminar */
+    color: white;
+}
+.buttonDelete:hover {
+    background-color: #c82333;
+}
+
+.backLink {
+    margin-top: 2rem; 
+    display: block; 
+    text-align: center; 
+    color: #0070f3; 
+    text-decoration: none;
+}

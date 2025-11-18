@@ -1,5 +1,6 @@
 import Link from 'next/link';
- 
+import { API_CONFIG } from '@/config/config';
+
 export default async function DetalleAuto({ params }) {
 
   const { id } = await params; 
@@ -9,7 +10,7 @@ export default async function DetalleAuto({ params }) {
     return <h2 style={{ padding: "2rem" }}>Error: ID de auto no proporcionado 🚫</h2>
   }
 
-  const API_CAR_DETAIL_URL = `https://690aa7dc1a446bb9cc234227.mockapi.io/cars/${id}`;
+  const API_CAR_DETAIL_URL = `${API_CARS_URL}/${id}`;
   let auto = null;
   
   try {
