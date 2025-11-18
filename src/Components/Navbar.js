@@ -1,17 +1,14 @@
-'use client'; // Necesario para usar useAuth, useRouter
+// Components/Navbar.jsx
+'use client'; 
 
 import Link from 'next/link';
-import { useAuth } from '../contexts/AuthContext'; // Importar el hook de autenticación
-import { useRouter } from 'next/navigation';
+import { useAuth } from '../contexts/AuthContext';
 
 export default function Navbar() {
-  // Obtener estado y funciones del contexto
   const { isAuthenticated, user, logout } = useAuth(); 
-  const router = useRouter();
 
   const handleLogout = () => {
     logout();
-    // No se necesita el router.push('/login') porque ya lo tiene en el AuthContext
   };
 
   return (
@@ -24,14 +21,19 @@ export default function Navbar() {
       alignItems: 'center',
       boxShadow: '0 2px 4px rgba(0, 0, 0, 0.4)'
     }}>
-      {/* 🧭 Sección de Enlaces Principales */}
+
       <div style={{ display: 'flex', gap: '20px', alignItems: 'center' }}>
-        <Link href="/" style={linkStyle}>Inicio</Link>
-        <Link href="/catalogo" style={linkStyle}>Catálogo</Link>
+        <div style={{ fontSize: '1.4rem', fontWeight: 'bold', color: '#007bff', marginRight: '20px' }}>
+            <Link href="/">RENTCAR BA</Link> 
+        </div>
+        
+        {/* Enlaces Públicos */}
+        <Link href="/" style={linkStyle}>Inicio</Link> 
+        <Link href="/catalogo" style={linkStyle}>Catálogo</Link> 
         <Link href="/legales" style={linkStyle}>Legales</Link>
 
         {/* 🛡️ Ruta Exclusiva para Administradores */}
-        {user?.role === 'admin' && (
+        {isAuthenticated && user?.role === 'admin' && (
           <Link href="/admin" style={{ ...linkStyle, color: '#FFD700', fontWeight: 'bold' }}>
             ADMIN
           </Link>
@@ -66,12 +68,13 @@ export default function Navbar() {
   )
 }
 
-// Estilos base para los enlaces y botones
+// Estilos base para los enlaces y botones (Mantenemos los estilos separados del componente)
 const linkStyle = {
   color: 'white',
   textDecoration: 'none',
   padding: '5px',
   transition: 'color 0.2s',
+  marginRight: '5px', // Asegura un buen espaciado
 };
 
 const buttonStyle = {
