@@ -1,9 +1,9 @@
-// app/login/page.jsx
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { useAuth } from '../../contexts/AuthContext'; // Ajusta la ruta si es necesario
+import { useAuth } from '../../contexts/AuthContext';
 import { useRouter } from 'next/navigation';
+import styles from './login.module.css';
 
 export default function LoginPage() {
   const [email, setEmail] = useState('');
@@ -33,47 +33,48 @@ export default function LoginPage() {
 
   // Mostrar un mensaje de carga si la sesión se está verificando
   if (isLoading) {
-    return <div style={{padding: '2rem'}}>Cargando sesión...</div>;
+    return <div className={styles.message}>Cargando sesión...</div>;
   }
   
   // Si ya está autenticado (y no está cargando), el useEffect lo redirigirá.
   if (isAuthenticated) {
-    return <div style={{padding: '2rem'}}>Autenticado. Redirigiendo...</div>;
+    return <div className={styles.message}>Autenticado. Redirigiendo...</div>;
   }
 
   return (
-    <div style={{ padding: '2rem', maxWidth: '400px', margin: 'auto' }}>
-      <h1>Iniciar Sesión</h1>
-      <form onSubmit={handleSubmit}>
-        <div style={{ marginBottom: '1rem' }}>
+    <div className={styles.container}>
+      {/* ✨ Usamos la clase title */}
+      <h1 className={styles.title}>Iniciar Sesión</h1> 
+      <form onSubmit={handleSubmit} className={styles.form}>
+        <div className={styles.formGroup}>
           <label htmlFor="email">Email:</label>
           <input
             type="email"
             id="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            placeholder="Ej: admin@mail.com"
+            placeholder="Ej: nombre@mail.com"
             required
-            style={{ width: '100%', padding: '0.5rem' }}
+            className={styles.input}
           />
         </div>
-        <div style={{ marginBottom: '1.5rem' }}>
+        <div className={styles.formGroup}>
           <label htmlFor="password">Contraseña:</label>
           <input
             type="password"
             id="password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            placeholder="Contraseña: 123"
+            placeholder="Contraseña"
             required
-            style={{ width: '100%', padding: '0.5rem' }}
+            className={styles.input}
           />
         </div>
-        <button type="submit" disabled={isLoading} style={{ padding: '0.75rem', width: '100%', background: '#0070f3', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer' }}>
-          Entrar
+        <button type="submit" disabled={isLoading} className={styles.submitButton}>
+          {isLoading ? 'Conectando...' : 'Entrar'}
         </button>
       </form>
-      <p style={{ marginTop: '1rem', textAlign: 'center' }}>
+      <p className={styles.message}>
       </p>
     </div>
   );

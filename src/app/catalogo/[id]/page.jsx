@@ -1,11 +1,10 @@
-// app/catalago/[id]/page.jsx
-
-// Componente de Servidor (Async)
+import Link from 'next/link';
+ 
 export default async function DetalleAuto({ params }) {
-  // 1. CORRECCIÓN: Usar 'await' para desestructurar 'params' (como lo exige tu versión de Next.js)
+
   const { id } = await params; 
   
-  // Si el ID sigue siendo nulo, retornamos un error claro
+  // Si el ID sigue siendo nulo, retornamos un error
   if (!id) {
     return <h2 style={{ padding: "2rem" }}>Error: ID de auto no proporcionado 🚫</h2>
   }
@@ -46,9 +45,9 @@ export default async function DetalleAuto({ params }) {
         Precio: ${parseFloat(auto.price).toLocaleString()}
       </h3>
       
-      <a href="/catalogo" style={{ display: "inline-block", marginTop: "1.5rem", color: "#0070f3" }}>
+      <Link href="/catalogo" style={{ display: "inline-block", marginTop: "1.5rem", color: "#0070f3" }}>
         ← Volver al catálogo
-      </a>
+      </Link>
     </main>
   )
 }
