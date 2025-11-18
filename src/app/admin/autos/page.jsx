@@ -3,8 +3,11 @@
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import styles from './admin-management.module.css';
+import { API_CONFIG } from '@/config/config';    
 
-const API_CARS_URL = "https://690aa7dc1a446bb9cc234227.mockapi.io/cars";
+
+
+const API_CARS_URL = API_CONFIG.API_CARS_URL;
 
 export default function AdminCarManagementPage() {
   const [cars, setCars] = useState([]);
