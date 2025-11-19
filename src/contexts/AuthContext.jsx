@@ -11,9 +11,8 @@ export const useAuth = () => useContext(AuthContext);
 // const API_USERS_URL = API_CONFIG.API_USERS_URL;
 // ------------------------------------------------------------------
 
-// ✅ CÓDIGO NUEVO (BACKEND REAL)
-// Usamos la URL de Login que definimos (o la construimos aquí si no está en config)
-const API_AUTH_URL = "http://localhost:3001/users/login"; 
+
+const API_AUTH_URL = API_CONFIG.API_AUTH_URL; 
 
 export default function AuthProvider({children}) {
   const [user, setUser] = useState(null);
@@ -22,7 +21,7 @@ export default function AuthProvider({children}) {
 
   const router = useRouter();
 
-  // 1. EFECTO INICIAL (Se mantiene igual)
+  
   useEffect(() => {
     try {
       const userStorage = localStorage.getItem("user");

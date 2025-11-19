@@ -3,17 +3,18 @@
 
 import React from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import styles from '../app/catalogo/catalogo.module.css';
 
 // Componente de Cliente para la tarjeta interactiva
 export default function CarCard({ auto }) {
-  
+  const router = useRouter();
   const handleRentClick = (e) => { 
     e.preventDefault(); 
     e.stopPropagation(); 
     if (!auto.isRented) {
-        alert(`Intentando alquilar el ${auto.model}...`);
-        // Aca tendriamos que hacer la lógica del FETCH con el backend de TP2 (POST/PUT)
+        //alert(`Intentando alquilar el ${auto.model}...`);
+        router.push(`/catalogo/${auto.id}/alquilar`);
     }
   };
 
