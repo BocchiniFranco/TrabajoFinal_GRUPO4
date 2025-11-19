@@ -2,7 +2,6 @@ import React, { createContext, useContext, useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { API_CONFIG } from '@/config/config';
 
-// Crear contexto de autenticación
 const AuthContext = createContext(null);
 
 export const useAuth = () => useContext(AuthContext); 
@@ -42,8 +41,8 @@ export default function AuthProvider({children}) {
     }
   }, []);
 
-  // Función de login mejorada con manejo de errores
-  const login = async (credentials) => {
+  // 2. FUNCIÓN DE LOGIN
+  const login = async(credentials) => {
     setIsLoading(true);
     
     /* ------------------------------------------------------------------
@@ -76,7 +75,7 @@ export default function AuthProvider({children}) {
     finally { setIsLoading(false); } 
     ------------------------------------------------------------------ */
 
-    // ✅ LÓGICA NUEVA (CONEXIÓN AL BACKEND REAL de TP2)
+    // ✅ LÓGICA NUEVA (CONEXIÓN AL BACKEND REAL)
     try {
         const resp = await fetch(API_AUTH_URL, {
             method: 'POST',
@@ -120,22 +119,19 @@ export default function AuthProvider({children}) {
         setIsLoading(false); // Apagamos carga explícitamente
         return { error: "Error de conexión" };
     }
-  };
+  }
 
   // 3. FUNCIÓN DE LOGOUT (Se mantiene igual)
   const logout = () => {
-    // Limpiar estado
     setUser(null);
     setIsAuthenticated(false);
-    
-    // Limpiar almacenamiento local
     localStorage.removeItem("user");
     router.push("/login");
   }
 
   return (
-    <AuthContext.Provider value={contextValue}>
-      {children}
+    <AuthContext.Provider value={{user, isLoading, login, logout, isAuthenticated}}>
+        {children}
     </AuthContext.Provider>
   );
 }
