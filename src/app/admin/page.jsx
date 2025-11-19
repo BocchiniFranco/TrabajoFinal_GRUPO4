@@ -5,8 +5,11 @@ import Link from 'next/link';
 // ✨ Importar el módulo CSS
 import styles from './dashboard.module.css';
 
+import { API_CONFIG } from '@/config/config';    
+
+
 // URL del catálogo de autos
-const API_CARS_URL = "https://690aa7dc1a446bb9cc234227.mockapi.io/cars";
+const API_CARS_URL = API_CONFIG.API_CARS_URL;
 
 export default function AdminDashboard() {
   const [stats, setStats] = useState({

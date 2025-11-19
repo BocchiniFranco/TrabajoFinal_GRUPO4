@@ -85,7 +85,6 @@ export default async function DetalleAuto({ params }) {
         </div>
       </div>
 
-      {/* Descripción */}
       <p className={styles.description}>
         <span>Descripción:</span> {auto.description || "Este es un vehículo excepcional, con todas las comodidades y un rendimiento inigualable. Ideal para cualquier aventura, ya sea en la ciudad o en carretera. Contáctanos para más detalles sobre su alquiler."}
       </p>
