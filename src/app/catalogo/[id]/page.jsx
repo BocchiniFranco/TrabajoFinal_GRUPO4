@@ -1,52 +1,64 @@
+// detalle-auto/page.js
 import Link from 'next/link';
 import { API_CONFIG } from '@/config/config';    
 import styles from './detalle-auto.module.css'; 
 
 const API_CARS_URL = API_CONFIG.API_CARS_URL;
+const API_RESERVATIONS_URL = 'http://localhost:3001/reservations';
 
-// Componente de Servidor (Async) para obtener los detalles del auto
+async function getCarAvailability(carId) {
+  try {
+    const res = await fetch(`${API_RESERVATIONS_URL}/car/${carId}/next-available`, {
+      cache: 'no-store'
+    });
+    if (res.ok) {
+      return await res.json();
+    }
+  } catch (error) {
+    console.error('Error fetching availability:', error);
+  }
+  return null;
+}
+
 export default async function DetalleAuto({ params }) {
-
   const { id } = await params; 
 
   if (!id) {
-    return <h2 className={styles.container} style={{ color: '#dc3545' }}>Error: ID de auto no proporcionado 🚫</h2>
+    return <h2 className={styles.container}>Error: ID de auto no proporcionado 🚫</h2>
   }
 
   const API_CAR_DETAIL_URL = `${API_CARS_URL}/${id}`;
   let auto = null;
+  let availability = null;
 
   try {
-    const res = await fetch(API_CAR_DETAIL_URL, { cache: 'no-store' });
+    const [carRes, availabilityRes] = await Promise.all([
+      fetch(API_CAR_DETAIL_URL, { cache: 'no-store' }),
+      getCarAvailability(id)
+    ]);
 
-    if (!res.ok) {
-        throw new Error(`Auto con ID ${id} no encontrado.`); 
-    }
-
-    auto = await res.json();
+    if (!carRes.ok) throw new Error(`Auto con ID ${id} no encontrado.`); 
+    
+    auto = await carRes.json();
+    availability = availabilityRes;
 
   } catch (error) {
     console.error(`Error al obtener el auto ${id}:`, error);
-    if (error.message.includes("no encontrado")) {
-        return <h2 className={styles.container} style={{ color: '#dc3545' }}>Auto no encontrado.</h2>
-    }
-    return <h2 className={styles.container} style={{ color: '#dc3545' }}>Error de conexión con la API o el auto no existe.</h2>
+    return <h2 className={styles.container}>Error de conexión con la API</h2>
   }
 
   if (!auto || !auto.id) {
-    return <h2 className={styles.container} style={{ color: '#dc3545' }}>Auto con ID {id} no existe 🚫</h2>
+    return <h2 className={styles.container}>Auto con ID {id} no existe 🚫</h2>
   }
 
-  // Renderizado final
+  const isAvailable = availability?.isAvailable ?? true;
+  const nextAvailableDate = availability?.nextAvailableDate;
+
   return (
     <main className={styles.container}>
       <div className={styles.header}>
-        <h1 className={styles.title}>
-          {auto.brand} {auto.model} 
-        </h1>
-        <p className={styles.subtitle}>
-          ¡Descubre más sobre este increíble vehículo!
-        </p>
+        <h1 className={styles.title}>{auto.brand} {auto.model}</h1>
+        <p className={styles.subtitle}>¡Descubre más sobre este increíble vehículo!</p>
       </div>
 
       {auto.imageUrl && (
@@ -54,7 +66,7 @@ export default async function DetalleAuto({ params }) {
           <img 
             src={auto.imageUrl} 
             alt={`${auto.brand} ${auto.model}`} 
-            style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '8px' }}
+            className={styles.carImage}
           />
         </div>
       )}
@@ -64,34 +76,35 @@ export default async function DetalleAuto({ params }) {
           <p className={styles.detailItem}><span>Marca:</span> {auto.brand}</p>
           <p className={styles.detailItem}><span>Modelo:</span> {auto.model}</p>
           <p className={styles.detailItem}><span>Precio por día:</span> ${parseFloat(auto.price).toLocaleString()}</p>
-          <p className={`${styles.detailItem} ${auto.isRented ? styles.statusRented : styles.statusAvailable}`}>
-            <span>Estado:</span> {auto.isRented ? '❌ Actualmente Alquilado' : '✅ Disponible para Alquiler'}
+          <p className={`${styles.detailItem} ${isAvailable ? styles.statusAvailable : styles.statusRented}`}>
+            <span>Estado:</span> {isAvailable ? '✅ Disponible para Alquiler' : '❌ Actualmente Alquilado'}
           </p>
-          {auto.isRented && auto.availableUntil && (
-              <p className={styles.detailItem}>
-                  <span>Regresa el:</span> {new Date(auto.availableUntil).toLocaleDateString()}
-              </p>
+          {!isAvailable && nextAvailableDate && (
+            <p className={styles.detailItem}>
+              <span>Disponible a partir del:</span> {new Date(nextAvailableDate).toLocaleDateString()}
+            </p>
+          )}
+          {!isAvailable && !nextAvailableDate && (
+            <p className={styles.detailItem}>
+              <span>Próxima disponibilidad:</span> Consultar fechas
+            </p>
           )}
         </div>
       </div>
 
       <p className={styles.description}>
-        <span>Descripción:</span> {auto.description || "Este es un vehículo excepcional, con todas las comodidades y un rendimiento inigualable. Ideal para cualquier aventura, ya sea en la ciudad o en carretera. Contáctanos para más detalles sobre su alquiler."}
+        <span>Descripción:</span> {auto.description || "Este es un vehículo excepcional..."}
       </p>
 
-      {/* ✅ NUEVO: Botón de Reservar */}
       <div className={styles.actions}>
         <Link 
-          href={`/catalogo/${id}/alquilar`}
-          className={styles.reserveButton}
+          href={isAvailable ? `/catalogo/${id}/alquilar` : '#'}
+          className={isAvailable ? styles.reserveButton : styles.disabledButton}
         >
-          🗓️ Reservar Este Auto
+          {isAvailable ? '🗓️ Reservar Este Auto' : '❌ No Disponible'}
         </Link>
         
-        <Link 
-          href="/catalogo" 
-          className={styles.backLink}
-        >
+        <Link href="/catalogo" className={styles.backButton}>
           ← Volver al catálogo
         </Link>
       </div>

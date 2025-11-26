@@ -99,12 +99,23 @@ export default function AdminDashboard() {
         <div className={styles.actionsContent}>
           <h3 className={styles.actionsTitle}>Acciones Rápidas</h3>
           <div className={styles.actionsGrid}>
+            
             <Link
               href="/admin/autos"
               className={styles.actionPrimary}
             >
+              <div className={styles.actionIcon}>🚗</div>
               Gestionar Inventario
             </Link>
+
+            <Link
+              href="/admin/reservas"
+              className={styles.actionSuccess}
+            >
+            <div className={styles.actionIcon}>📋</div>
+              Gestionar Reservas
+            </Link>
+
             <Link
               href="/catalogo"
               className={styles.actionSecondary}

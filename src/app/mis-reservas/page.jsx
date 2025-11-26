@@ -5,9 +5,10 @@ import { useAuth } from '@/contexts/AuthContext';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import styles from './mis-reservas.module.css';
+import { API_CONFIG } from '@/config/config';
 
 // Configuración de la API
-const API_RESERVATIONS_URL = 'http://localhost:3001/reservations';
+const API_RESERVATIONS_URL = API_CONFIG.API_RESERVATIONS_URL;
 
 export default function MisReservasPage() {
   const { isAuthenticated, user, isLoading } = useAuth();
@@ -56,19 +57,26 @@ export default function MisReservasPage() {
     }
   };
 
-  // Cancelar reserva
+  // ✅ FUNCIÓN ACTUALIZADA: Cancelar reserva y refrescar fechas bloqueadas
   const handleCancelReservation = async (reservationId) => {
     if (!confirm('¿Estás seguro de que quieres cancelar esta reserva?')) {
       return;
     }
 
     try {
+      // 1. Cancelar la reserva
       const response = await fetch(`${API_RESERVATIONS_URL}/${reservationId}`, {
         method: 'DELETE',
       });
 
       if (response.ok) {
-        alert('✅ Reserva cancelada exitosamente');
+        // 2. ✅ IMPORTANTE: Refrescar las fechas bloqueadas del auto
+        const reservation = reservations.find(r => r.id === reservationId);
+        if (reservation && reservation.carId) {
+          await refreshBlockedDates(reservation.carId);
+        }
+
+        alert('✅ Reserva cancelada exitosamente. Las fechas ahora están disponibles.');
         fetchUserReservations(); // Recargar la lista
       } else {
         const data = await response.json();
@@ -78,6 +86,35 @@ export default function MisReservasPage() {
       console.error('Error cancelando reserva:', error);
       alert('Error de conexión');
     }
+  };
+
+  // ✅ NUEVA FUNCIÓN: Refrescar fechas bloqueadas del auto
+  const refreshBlockedDates = async (carId) => {
+    try {
+      console.log('🔄 Refrescando fechas bloqueadas para auto:', carId);
+      
+      // Hacer una llamada a la ruta de blocked-dates para forzar la actualización
+      const response = await fetch(`${API_RESERVATIONS_URL}/car/${carId}/blocked-dates`);
+      
+      if (response.ok) {
+        const data = await response.json();
+        console.log('✅ Fechas bloqueadas actualizadas:', data.blockedDates);
+        
+        // Notificar a otros componentes sobre la actualización
+        dispatchBlockedDatesUpdate(carId, data.blockedDates);
+      }
+    } catch (error) {
+      console.error('❌ Error refrescando fechas bloqueadas:', error);
+    }
+  };
+
+  // ✅ OPCIONAL: Disparar evento personalizado para notificar a otros componentes
+  const dispatchBlockedDatesUpdate = (carId, blockedDates) => {
+    // Crear un evento personalizado que otros componentes puedan escuchar
+    const event = new CustomEvent('blockedDatesUpdated', {
+      detail: { carId, blockedDates }
+    });
+    window.dispatchEvent(event);
   };
 
   // Iniciar edición
@@ -94,7 +131,7 @@ export default function MisReservasPage() {
     setEditEndDate('');
   };
 
-  // Guardar cambios de edición
+  // ✅ FUNCIÓN ACTUALIZADA: Guardar cambios de edición y refrescar fechas
   const handleSaveEdit = async (reservationId) => {
     if (!editStartDate || !editEndDate) {
       alert('Por favor completa ambas fechas');
@@ -124,6 +161,12 @@ export default function MisReservasPage() {
       const data = await response.json();
 
       if (response.ok) {
+        // ✅ Refrescar fechas bloqueadas después de modificar
+        const reservation = reservations.find(r => r.id === reservationId);
+        if (reservation && reservation.carId) {
+          await refreshBlockedDates(reservation.carId);
+        }
+
         alert('✅ Reserva actualizada exitosamente');
         setEditingReservation(null);
         fetchUserReservations(); // Recargar la lista

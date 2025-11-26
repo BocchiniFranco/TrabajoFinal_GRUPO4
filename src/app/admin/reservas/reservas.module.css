@@ -1,0 +1,221 @@
+/* src/app/admin/reservas/reservas.module.css */
+.container {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 2rem;
+  }
+  
+  .header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 2rem;
+    flex-wrap: wrap;
+    gap: 1rem;
+  }
+  
+  .title {
+    color: #333;
+    margin-bottom: 0.5rem;
+  }
+  
+  .subtitle {
+    color: #666;
+    margin: 0;
+  }
+  
+  .backButton {
+    background: #6c757d;
+    color: white;
+    padding: 0.75rem 1.5rem;
+    border: none;
+    border-radius: 4px;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 0.9rem;
+  }
+  
+  .backButton:hover {
+    background: #5a6268;
+  }
+  
+  .filters {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 2rem;
+    flex-wrap: wrap;
+  }
+  
+  .filterButton {
+    padding: 0.5rem 1rem;
+    border: 1px solid #ddd;
+    background: white;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  
+  .filterButton:hover {
+    background: #f8f9fa;
+  }
+  
+  .filterButton.active {
+    background: #007bff;
+    color: white;
+    border-color: #007bff;
+  }
+  
+  .tableContainer {
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+  }
+  
+  .table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  
+  .table th {
+    background: #f8f9fa;
+    padding: 1rem;
+    text-align: left;
+    font-weight: 600;
+    color: #495057;
+    border-bottom: 1px solid #dee2e6;
+  }
+  
+  .table td {
+    padding: 1rem;
+    border-bottom: 1px solid #dee2e6;
+  }
+  
+  .table tr:hover {
+    background: #f8f9fa;
+  }
+  
+  .idCell {
+    font-family: 'Courier New', monospace;
+    font-weight: 600;
+    color: #6c757d;
+  }
+  
+  .carInfo, .userInfo {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .carInfo strong, .userInfo strong {
+    margin-bottom: 0.25rem;
+  }
+  
+  .carInfo small, .userInfo small {
+    color: #6c757d;
+    font-size: 0.8rem;
+  }
+  
+  .statusBadge {
+    padding: 0.25rem 0.5rem;
+    border-radius: 12px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    text-transform: uppercase;
+  }
+  
+  .statusConfirmed {
+    background: #d4edda;
+    color: #155724;
+  }
+  
+  .statusActive {
+    background: #cce7ff;
+    color: #004085;
+  }
+  
+  .statusCancelled {
+    background: #f8d7da;
+    color: #721c24;
+  }
+  
+  .statusCompleted {
+    background: #e2e3e5;
+    color: #383d41;
+  }
+  
+  .statusUnknown {
+    background: #fff3cd;
+    color: #856404;
+  }
+  
+  .actions {
+    display: flex;
+    gap: 0.5rem;
+  }
+  
+  .cancelButton {
+    background: #dc3545;
+    color: white;
+    padding: 0.25rem 0.5rem;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.8rem;
+  }
+  
+  .cancelButton:hover {
+    background: #c82333;
+  }
+  
+  .detailsButton {
+    background: #17a2b8;
+    color: white;
+    padding: 0.25rem 0.5rem;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.8rem;
+  }
+  
+  .detailsButton:hover {
+    background: #138496;
+  }
+  
+  .noData {
+    text-align: center;
+    color: #6c757d;
+    padding: 2rem;
+    font-style: italic;
+  }
+  
+  .loadingContainer {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 50vh;
+    font-size: 1.2rem;
+    color: #666;
+  }
+  
+  /* Responsive */
+  @media (max-width: 768px) {
+    .container {
+      padding: 1rem;
+    }
+    
+    .header {
+      flex-direction: column;
+    }
+    
+    .filters {
+      flex-direction: column;
+    }
+    
+    .tableContainer {
+      overflow-x: auto;
+    }
+    
+    .actions {
+      flex-direction: column;
+    }
+  }

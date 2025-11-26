@@ -1,26 +1,31 @@
+// /catalogo/page.js
 import CarCard from '../../Components/CarCard';
 import styles from './catalogo.module.css';
 import { API_CONFIG } from '@/config/config';
+import { isCarAvailable } from '@/utils/rentalUtils';
 
 const API_CARS_URL = API_CONFIG.API_CARS_URL;
 
 async function getCars() { 
   try {
     const res = await fetch(API_CARS_URL, { cache: 'no-store' }); 
-    if (!res.ok) {
-      throw new Error(`Fallo al obtener los datos del catálogo: ${res.status}`);
-    }
+    if (!res.ok) throw new Error(`Error: ${res.status}`);
     return res.json();
   } catch (error) {
     console.error("Error fetching cars:", error);
     return []; 
   }
 }
-// ...
 
 export default async function CatalogoPage() {
   const autos = await getCars();
   
+  // Calcular disponibilidad para cada auto
+  const autosConDisponibilidad = autos.map(auto => ({
+    ...auto,
+    isAvailable: isCarAvailable(auto)
+  }));
+
   if (autos.length === 0) {
     return (
       <main className={`${styles.mainContainer} ${styles.noDataContainer}`}>
@@ -35,7 +40,7 @@ export default async function CatalogoPage() {
       <h1 className={styles.title}>Catálogo de Autos</h1>
       
       <ul className={styles.list}>
-        {autos.map((auto) => (
+        {autosConDisponibilidad.map((auto) => (
           <li key={auto.id} className={styles.listItem}>
             <CarCard auto={auto} />
           </li>

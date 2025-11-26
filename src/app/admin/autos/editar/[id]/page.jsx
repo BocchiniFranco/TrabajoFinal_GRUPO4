@@ -4,12 +4,12 @@
 import React, { useState, useEffect } from 'react';
 import { useRouter, useParams } from 'next/navigation';
 import { API_CONFIG } from '@/config/config';
-import styles from './editar.module.css'; // Usaremos un nuevo CSS Module
+import styles from './editar.module.css';
 
 const API_CARS_URL = API_CONFIG.API_CARS_URL;
 
 export default function EditarAutoPage() {
-  const { id } = useParams(); // Obtiene el ID del auto de la URL
+  const { id } = useParams();
   const router = useRouter();
   
   const [formData, setFormData] = useState({
@@ -18,11 +18,10 @@ export default function EditarAutoPage() {
     price: '',
     description: '',
     imageUrl: '',
-    isRented: false,
-    availableUntil: null,
   });
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
+  const [error, setError] = useState(null);
 
   // 1. Efecto para cargar los datos existentes del auto
   useEffect(() => {
@@ -33,20 +32,17 @@ export default function EditarAutoPage() {
         
         const data = await res.json();
         
-        // Formatear los datos para el formulario
+        // Formatear los datos para el formulario - SOLO campos básicos
         setFormData({
           brand: data.brand || '',
           model: data.model || '',
-          price: data.price ? parseFloat(data.price) : '', // Asegurar que es número/string
+          price: data.price ? data.price.toString() : '', // Mantener como string para el input
           description: data.description || '',
           imageUrl: data.imageUrl || '',
-          isRented: data.isRented || false,
-          availableUntil: data.availableUntil ? data.availableUntil.substring(0, 10) : '', // Formatear la fecha
         });
       } catch (error) {
         console.error('Error al cargar datos:', error);
-        alert('Error al cargar datos del auto. Vuelve al inventario.');
-        router.push('/admin/autos');
+        setError('Error al cargar datos del auto. Vuelve al inventario.');
       } finally {
         setLoading(false);
       }
@@ -59,10 +55,10 @@ export default function EditarAutoPage() {
 
   // 2. Manejar cambios en los inputs
   const handleChange = (e) => {
-    const { name, value, type, checked } = e.target;
+    const { name, value } = e.target;
     setFormData(prev => ({
       ...prev,
-      [name]: type === 'checkbox' ? checked : value,
+      [name]: value,
     }));
   };
 
@@ -72,10 +68,22 @@ export default function EditarAutoPage() {
     setSaving(true);
     
     try {
+      // Validaciones
+      if (!formData.brand.trim() || !formData.model.trim() || !formData.price) {
+        throw new Error('Marca, modelo y precio son requeridos');
+      }
+
+      if (parseFloat(formData.price) <= 0) {
+        throw new Error('El precio debe ser mayor a 0');
+      }
+
+      // Solo enviar los campos básicos, no isRented ni availableUntil
       const payload = {
-        ...formData,
-        // Convertir la fecha vacía a null si no está alquilado
-        availableUntil: formData.isRented && formData.availableUntil ? formData.availableUntil : null,
+        brand: formData.brand.trim(),
+        model: formData.model.trim(),
+        price: parseFloat(formData.price),
+        description: formData.description.trim(),
+        imageUrl: formData.imageUrl.trim() || null,
       };
 
       const res = await fetch(`${API_CARS_URL}/${id}`, {
@@ -85,11 +93,12 @@ export default function EditarAutoPage() {
       });
 
       if (!res.ok) {
-        throw new Error(`Fallo al actualizar el auto: ${res.status}`);
+        const errorData = await res.json();
+        throw new Error(errorData.message || `Error ${res.status}: ${res.statusText}`);
       }
 
       alert('¡Auto actualizado exitosamente!');
-      router.push('/admin/autos'); // Volver a la lista de gestión
+      router.push('/admin/autos');
 
     } catch (error) {
       console.error('Error al guardar:', error);
@@ -99,12 +108,23 @@ export default function EditarAutoPage() {
     }
   };
 
+  // Estados de carga y error
   if (loading) {
-    return <div style={styles.loading}>Cargando formulario...</div>;
+    return <div className={styles.loading}>Cargando formulario...</div>;
   }
   
-  if (!formData.brand) {
-      return <div style={styles.error}>No se pudo encontrar el auto con ID: {id}</div>;
+  if (error) {
+    return (
+      <div className={styles.errorContainer}>
+        <div className={styles.error}>{error}</div>
+        <button 
+          onClick={() => router.push('/admin/autos')} 
+          className={styles.backButton}
+        >
+          Volver al Inventario
+        </button>
+      </div>
+    );
   }
 
   return (
@@ -116,44 +136,85 @@ export default function EditarAutoPage() {
         {/* Campos Principales */}
         <div className={styles.formGrid}>
           <div className={styles.formGroup}>
-            <label htmlFor="brand" className={styles.label}>Marca</label>
-            <input type="text" id="brand" name="brand" value={formData.brand} onChange={handleChange} className={styles.input} required />
+            <label htmlFor="brand" className={styles.label}>Marca *</label>
+            <input 
+              type="text" 
+              id="brand" 
+              name="brand" 
+              value={formData.brand} 
+              onChange={handleChange} 
+              className={styles.input} 
+              required 
+              placeholder="Ej: Toyota"
+            />
           </div>
           
           <div className={styles.formGroup}>
-            <label htmlFor="model" className={styles.label}>Modelo</label>
-            <input type="text" id="model" name="model" value={formData.model} onChange={handleChange} className={styles.input} required />
+            <label htmlFor="model" className={styles.label}>Modelo *</label>
+            <input 
+              type="text" 
+              id="model" 
+              name="model" 
+              value={formData.model} 
+              onChange={handleChange} 
+              className={styles.input} 
+              required 
+              placeholder="Ej: Corolla"
+            />
           </div>
 
           <div className={styles.formGroup}>
-            <label htmlFor="price" className={styles.label}>Precio por Día ($)</label>
-            <input type="number" id="price" name="price" value={formData.price} onChange={handleChange} className={styles.input} required />
+            <label htmlFor="price" className={styles.label}>Precio por Día ($) *</label>
+            <input 
+              type="number" 
+              id="price" 
+              name="price" 
+              value={formData.price} 
+              onChange={handleChange} 
+              className={styles.input} 
+              required 
+              min="0" 
+              step="0.01"
+              placeholder="0.00"
+            />
           </div>
           
           <div className={styles.formGroup}>
             <label htmlFor="imageUrl" className={styles.label}>URL de Imagen</label>
-            <input type="text" id="imageUrl" name="imageUrl" value={formData.imageUrl} onChange={handleChange} className={styles.input} />
+            <input 
+              type="text" 
+              id="imageUrl" 
+              name="imageUrl" 
+              value={formData.imageUrl} 
+              onChange={handleChange} 
+              className={styles.input} 
+              placeholder="https://ejemplo.com/imagen.jpg"
+            />
           </div>
         </div>
 
         {/* Descripción */}
         <div className={styles.formGroup}>
           <label htmlFor="description" className={styles.label}>Descripción</label>
-          <textarea id="description" name="description" value={formData.description} onChange={handleChange} className={styles.textarea} rows="4" />
+          <textarea 
+            id="description" 
+            name="description" 
+            value={formData.description} 
+            onChange={handleChange} 
+            className={styles.textarea} 
+            rows="4" 
+            placeholder="Descripción detallada del auto..."
+          />
         </div>
 
-        {/* Estado y Disponibilidad */}
-        <div className={styles.availabilityGroup}>
-          <div className={styles.checkboxGroup}>
-            <input type="checkbox" id="isRented" name="isRented" checked={formData.isRented} onChange={handleChange} />
-            <label htmlFor="isRented">Marcar como Alquilado</label>
-          </div>
-
-          <div className={styles.formGroup} style={{ opacity: formData.isRented ? 1 : 0.5, pointerEvents: formData.isRented ? 'auto' : 'none' }}>
-            <label htmlFor="availableUntil" className={styles.label}>Disponible hasta (Fecha de Regreso)</label>
-            {/* Usamos el tipo date de HTML y el valor formateado */}
-            <input type="date" id="availableUntil" name="availableUntil" value={formData.availableUntil} onChange={handleChange} className={styles.input} required={formData.isRented} />
-          </div>
+        {/* Información sobre estado de alquiler */}
+        <div className={styles.infoBox}>
+          <h3 className={styles.infoTitle}>Información sobre Alquiler</h3>
+          <p className={styles.infoText}>
+            El estado de alquiler (disponible/alquilado) se gestiona automáticamente 
+            a través del sistema de reservas. Para liberar un auto alquilado, 
+            usa la opción "LIBERAR" en la lista de gestión.
+          </p>
         </div>
 
         {/* Botones de Acción */}
@@ -161,7 +222,12 @@ export default function EditarAutoPage() {
           <button type="submit" className={styles.saveButton} disabled={saving}>
             {saving ? 'Guardando...' : 'Guardar Cambios'}
           </button>
-          <button type="button" className={styles.cancelButton} onClick={() => router.push('/admin/autos')} disabled={saving}>
+          <button 
+            type="button" 
+            className={styles.cancelButton} 
+            onClick={() => router.push('/admin/autos')} 
+            disabled={saving}
+          >
             Cancelar
           </button>
         </div>
@@ -169,4 +235,3 @@ export default function EditarAutoPage() {
     </div>
   );
 }
-
