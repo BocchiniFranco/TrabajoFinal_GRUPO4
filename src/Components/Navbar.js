@@ -1,4 +1,3 @@
-// Components/Navbar.jsx
 'use client'; 
 
 import Link from 'next/link';
@@ -32,7 +31,14 @@ export default function Navbar() {
         <Link href="/catalogo" style={linkStyle}>Catálogo</Link> 
         <Link href="/legales" style={linkStyle}>Legales</Link>
 
-        {/* 🛡️ Ruta Exclusiva para Administradores */}
+        {/*Enlace "Mis Reservas" para usuarios autenticados */}
+        {isAuthenticated && user?.role === 'user' && (
+          <Link href="/mis-reservas" style={{ ...linkStyle, color: '#4CAF50', fontWeight: 'bold' }}>
+            Mis Reservas
+          </Link>
+        )}
+
+        {/*  Ruta Exclusiva para Administradores */}
         {isAuthenticated && user?.role === 'admin' && (
           <Link href="/admin" style={{ ...linkStyle, color: '#FFD700', fontWeight: 'bold' }}>
             ADMIN
@@ -40,7 +46,7 @@ export default function Navbar() {
         )}
       </div>
 
-      {/* 👤 Sección de Autenticación y Perfil */}
+      {/*  Sección de Autenticación y Perfil */}
       <div style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
         {isAuthenticated ? (
           <>

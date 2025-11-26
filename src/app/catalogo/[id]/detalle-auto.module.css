@@ -94,3 +94,66 @@
 .backLink:hover {
     color: #0056b3;
 }
+
+/*BOTON RESERVA*/
+.actions {
+  display: flex;
+  gap: 1rem;
+  margin-top: 2rem;
+  flex-wrap: wrap;
+}
+
+.reserveButton {
+  display: inline-block;
+  background: linear-gradient(135deg, #0070f3, #005bb5);
+  color: white;
+  padding: 1rem 2rem;
+  border-radius: 8px;
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 1.1rem;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 12px rgba(0, 112, 243, 0.3);
+  text-align: center;
+  flex: 1;
+  min-width: 200px;
+}
+
+.reserveButton:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(0, 112, 243, 0.4);
+  background: linear-gradient(135deg, #005bb5, #004a9c);
+}
+
+.backLink {
+  display: inline-block;
+  background: #f7fafc;
+  color: #4a5568;
+  padding: 1rem 2rem;
+  border-radius: 8px;
+  text-decoration: none;
+  font-weight: 600;
+  border: 2px solid #e2e8f0;
+  transition: all 0.3s ease;
+  text-align: center;
+  flex: 1;
+  min-width: 200px;
+}
+
+.backLink:hover {
+  background: #edf2f7;
+  border-color: #cbd5e0;
+}
+
+
+@media (max-width: 768px) {
+  .actions {
+    flex-direction: column;
+  }
+  
+  .reserveButton,
+  .backLink {
+    flex: none;
+    width: 100%;
+  }
+}

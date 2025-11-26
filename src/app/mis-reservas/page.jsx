@@ -35,16 +35,22 @@ export default function MisReservasPage() {
 
   const fetchUserReservations = async () => {
     try {
+      console.log('🔍 Cargando reservas para usuario:', user.id);
       const response = await fetch(`${API_RESERVATIONS_URL}/user/${user.id}`);
+      
+      console.log('📡 Response status:', response.status);
       
       if (response.ok) {
         const data = await response.json();
+        console.log('✅ Reservas cargadas:', data);
         setReservations(data.reservations || []);
       } else {
-        console.error('Error al cargar reservas');
+        console.error('❌ Error al cargar reservas:', response.status);
+        alert('Error al cargar las reservas');
       }
     } catch (error) {
-      console.error('Error de conexión:', error);
+      console.error('💥 Error de conexión:', error);
+      alert('Error de conexión con el servidor');
     } finally {
       setLoading(false);
     }
@@ -62,11 +68,11 @@ export default function MisReservasPage() {
       });
 
       if (response.ok) {
-        alert('Reserva cancelada exitosamente');
+        alert('✅ Reserva cancelada exitosamente');
         fetchUserReservations(); // Recargar la lista
       } else {
         const data = await response.json();
-        alert(`Error: ${data.message}`);
+        alert(`❌ Error: ${data.message}`);
       }
     } catch (error) {
       console.error('Error cancelando reserva:', error);
@@ -118,11 +124,11 @@ export default function MisReservasPage() {
       const data = await response.json();
 
       if (response.ok) {
-        alert('Reserva actualizada exitosamente');
+        alert('✅ Reserva actualizada exitosamente');
         setEditingReservation(null);
         fetchUserReservations(); // Recargar la lista
       } else {
-        alert(`Error: ${data.message}`);
+        alert(`❌ Error: ${data.message}`);
       }
     } catch (error) {
       console.error('Error actualizando reserva:', error);
@@ -167,7 +173,15 @@ export default function MisReservasPage() {
     return statusMap[status] || status;
   };
 
-  if (isLoading || loading) {
+  if (isLoading) {
+    return (
+      <div className={styles.loadingContainer}>
+        <div className={styles.loadingText}>Verificando autenticación...</div>
+      </div>
+    );
+  }
+
+  if (loading) {
     return (
       <div className={styles.loadingContainer}>
         <div className={styles.loadingText}>Cargando tus reservas...</div>
@@ -219,7 +233,7 @@ export default function MisReservasPage() {
                 </div>
                 
                 <div className={styles.price}>
-                  <strong>Total:</strong> ${reservation.totalPrice.toLocaleString()}
+                  <strong>Total:</strong> ${reservation.totalPrice?.toLocaleString() || '0'}
                 </div>
                 
                 <div className={styles.status}>

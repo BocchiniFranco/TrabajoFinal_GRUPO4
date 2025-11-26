@@ -1,5 +1,4 @@
 import Link from 'next/link';
-
 import { API_CONFIG } from '@/config/config';    
 import styles from './detalle-auto.module.css'; 
 
@@ -38,14 +37,6 @@ export default async function DetalleAuto({ params }) {
     return <h2 className={styles.container} style={{ color: '#dc3545' }}>Auto con ID {id} no existe 🚫</h2>
   }
 
-  // Estilos condicionales para el estado de alquiler
-  const statusStyle = {
-    fontSize: '1.2rem',
-    fontWeight: 'bold',
-    color: auto.isRented ? '#dc3545' : '#28a745',
-    marginTop: '10px'
-  };
-
   // Renderizado final
   return (
     <main className={styles.container}>
@@ -57,7 +48,6 @@ export default async function DetalleAuto({ params }) {
           ¡Descubre más sobre este increíble vehículo!
         </p>
       </div>
-
 
       {auto.imageUrl && (
         <div className={styles.imageContainer}>
@@ -88,13 +78,23 @@ export default async function DetalleAuto({ params }) {
       <p className={styles.description}>
         <span>Descripción:</span> {auto.description || "Este es un vehículo excepcional, con todas las comodidades y un rendimiento inigualable. Ideal para cualquier aventura, ya sea en la ciudad o en carretera. Contáctanos para más detalles sobre su alquiler."}
       </p>
-      
-      <Link 
-        href="/catalogo" 
-        className={styles.backLink}
-      >
-        ← Volver al catálogo
-      </Link>
+
+      {/* ✅ NUEVO: Botón de Reservar */}
+      <div className={styles.actions}>
+        <Link 
+          href={`/catalogo/${id}/alquilar`}
+          className={styles.reserveButton}
+        >
+          🗓️ Reservar Este Auto
+        </Link>
+        
+        <Link 
+          href="/catalogo" 
+          className={styles.backLink}
+        >
+          ← Volver al catálogo
+        </Link>
+      </div>
     </main>
   )
 }
