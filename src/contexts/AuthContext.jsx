@@ -133,4 +133,5 @@ export default function AuthProvider({children}) {
         {children}
     </AuthContext.Provider>
   );
+  
 }

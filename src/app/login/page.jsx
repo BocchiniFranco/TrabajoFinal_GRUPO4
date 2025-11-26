@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../../contexts/AuthContext';
 import { useRouter } from 'next/navigation';
+import Link from 'next/link'; // ✅ Agregar este import
 import styles from './login.module.css';
 
 export default function LoginPage() {
@@ -115,6 +116,16 @@ export default function LoginPage() {
           {isSubmitting ? 'Iniciando sesión...' : 'Entrar'}
         </button>
       </form>
+
+      {/* ✅ AGREGAR ESTA SECCIÓN - Enlace al registro */}
+      <div className={styles.registerLink}>
+        <p>
+          ¿No tienes cuenta?{' '}
+          <Link href="/registro" className={styles.link}>
+            Regístrate aquí
+          </Link>
+        </p>
+      </div>
 
       {/* Información para testing */}
       <div className={styles.demoInfo}>

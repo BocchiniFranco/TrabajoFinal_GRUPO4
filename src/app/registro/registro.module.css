@@ -1,4 +1,4 @@
-/* app/login/login.module.css */
+/* app/registro/registro.module.css */
 
 .container {
   padding: 3rem; 
@@ -35,21 +35,18 @@
   color: #333;
 }
 
-/* ✨ CORRECCIÓN CLAVE: Estilo de Inputs */
 .formGroup input {
   width: 100%;
   padding: 1rem 0.75rem; 
-  border: 1px solid #cceeff; /* Borde más claro */
+  border: 1px solid #cceeff;
   border-radius: 6px;
   box-sizing: border-box; 
   font-size: 1rem;
   transition: border-color 0.2s, box-shadow 0.2s;
   background-color: #f9f9f9; 
-  /* ✨ Contraste de texto en input: Aseguramos que el texto escrito sea oscuro */
   color: #333; 
 }
 
-/* Estilo para el placeholder y cuando el input está lleno */
 .formGroup input::placeholder {
     color: #999;
 }
@@ -59,7 +56,12 @@
     box-shadow: 0 0 0 3px rgba(0, 112, 243, 0.2); 
     outline: none;
 }
-/* Fin de corrección de Inputs */
+
+.formGroup input:disabled {
+    background-color: #f0f0f0;
+    cursor: not-allowed;
+    opacity: 0.7;
+}
 
 .submitButton {
   padding: 1rem; 
@@ -80,23 +82,34 @@
 }
 
 .submitButton:disabled {
-    /* Mantenemos el color activo, pero cambiamos el cursor */
     background-color: #0070f3; 
-    opacity: 0.7; /* Opacidad para indicar inactividad */
+    opacity: 0.7;
     cursor: not-allowed;
 }
 
-.message {
-  margin-top: 1rem;
+.errorMessage {
+  background-color: #fee;
+  color: #c33;
   padding: 0.75rem;
+  border-radius: 6px;
+  border: 1px solid #fcc;
   text-align: center;
-  /* Eliminamos el fondo para la sección de prueba */
-  background-color: transparent; 
-  border: none;
-  color: #555;
-  font-size: 0.9rem;
+  margin-bottom: 1rem;
+  font-weight: 500;
 }
-.registerLink {
+
+.successMessage {
+  background-color: #efe;
+  color: #363;
+  padding: 0.75rem;
+  border-radius: 6px;
+  border: 1px solid #cfc;
+  text-align: center;
+  margin-bottom: 1rem;
+  font-weight: 500;
+}
+
+.loginLink {
   text-align: center;
   margin-top: 2rem;
   padding-top: 1.5rem;
@@ -112,4 +125,16 @@
 
 .link:hover {
   text-decoration: underline;
+}
+
+@media (max-width: 480px) {
+  .container {
+    padding: 2rem;
+    margin: 2rem auto 0;
+    max-width: 90%;
+  }
+  
+  .title {
+    font-size: 1.6rem;
+  }
 }
