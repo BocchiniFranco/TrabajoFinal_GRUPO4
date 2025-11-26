@@ -1,4 +1,4 @@
-// src/Components/CarCard.jsx
+// Card de catalogo
 'use client'; 
 
 import React from 'react';

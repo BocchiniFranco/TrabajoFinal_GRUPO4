@@ -22,7 +22,7 @@ export default function HomePage() {
           </h1>
           <p className={styles.heroSubtitle}>
             {isAuthenticated ? 
-              `👋 Hola, ${user.name || user.email}. ¡Tu rol es ${user.role}!` 
+              `👋 Bienvenido, ${user.name || user.email}.!` 
               : 
               "Explora el catálogo o inicia sesión para acceder a la gestión de inventario."
             }

@@ -21,7 +21,7 @@ export default function RootLayout({ children }) {
   return (
 <html lang="es">
       <head>
-        <title>Alquiler de autos</title>
+        <title>RENTCAR BA</title>
       </head>
       <body>
         <AuthProvider>
